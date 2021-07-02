@@ -2,10 +2,10 @@ provider "oci" {}
 
 resource "oci_core_instance" "generated_oci_core_instance" {
 	agent_config {
-		is_management_disabled = "false"
-		is_monitoring_disabled = "false"
+		is_management_disabled = "true"
+		is_monitoring_disabled = "true"
 		plugins_config {
-			desired_state = "ENABLED"
+			desired_state = "DISABLED"
 			name = "Compute Instance Monitoring"
 		}
 	}
@@ -19,7 +19,7 @@ resource "oci_core_instance" "generated_oci_core_instance" {
 		assign_public_ip = "true"
 		subnet_id = "ocid1.subnet.oc1.eu-amsterdam-1.aaaaaaaa7lfgj4fcyfxlqc7cr4nhottzufvo5zzj2vc4syayk23i4rchenfq"
 	}
-	display_name = "wat"
+	display_name = "beastie"
 	instance_options {
 		are_legacy_imds_endpoints_disabled = "false"
 	}
@@ -28,8 +28,8 @@ resource "oci_core_instance" "generated_oci_core_instance" {
 	}
 	shape = "VM.Standard.A1.Flex"
 	shape_config {
-		memory_in_gbs = "24"
-		ocpus = "4"
+		memory_in_gbs = "4"
+		ocpus = "1"
 	}
 	source_details {
 		source_id = "ocid1.image.oc1.eu-amsterdam-1.aaaaaaaabmpqimzufiv6an4qq6qan5k6xwwiewgmtlnzdg5uj264l4hmpu6a"
