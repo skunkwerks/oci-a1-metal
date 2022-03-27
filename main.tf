@@ -49,7 +49,7 @@ resource "oci_core_instance" "hobbes" {
   }
   source_details {
     source_type = "image"
-    source_id = "ocid1.image.oc1.eu-amsterdam-1.aaaaaaaan3o7fxwackqmemoae55pwx4gaj4mprxw7huhkcpwcoykv5gotnpq"
+    source_id = "ocid1.image.oc1.eu-amsterdam-1.aaaaaaaalnttofwyncslnxc5a757mb72w6dqkmiel4mlt6uoextxxgsu6ypa"
   }
 }
 
