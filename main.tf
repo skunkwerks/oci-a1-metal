@@ -14,6 +14,8 @@ locals {
   ssh_private_key_path = "~/.oci/oci_api.pem"
 }
 
+# https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm
+# https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformconfig.htm#terraformconfig_topic_Configuration_File_Requirements_Provider
 provider "oci" {
   tenancy_ocid = local.tenancy_ocid
   user_ocid = local.user_ocid
@@ -22,13 +24,21 @@ provider "oci" {
   region = local.region
 }
 
-resource "oci_core_instance" "beastie" {
+resource "oci_core_instance" "beastie-arm64-1337" {
   agent_config {
     is_management_disabled = "true"
     is_monitoring_disabled = "true"
     plugins_config {
       desired_state = "DISABLED"
       name = "Vulnerability Scanning"
+    }
+    plugins_config {
+      desired_state = "DISABLED"
+      name = "Oracle Autonomous Linux"
+    }
+    plugins_config {
+      desired_state = "DISABLED"
+      name = "OS Management Service Agent"
     }
     plugins_config {
       desired_state = "DISABLED"
@@ -55,45 +65,54 @@ resource "oci_core_instance" "beastie" {
   create_vnic_details {
     assign_private_dns_record = "true"
     assign_public_ip = "true"
-    subnet_id = local.subnet_ocid
+    subnet_id = "${oci_core_subnet.generated_oci_core_subnet.id}"
   }
-  display_name = "beastie"
+  display_name = "beastie-arm64-1337"
   instance_options {
     are_legacy_imds_endpoints_disabled = "false"
   }
   metadata = {
-    "ssh_authorized_keys" = local.ssh_authorized_keys
+    "user_data" = "IyEvYmluL3NoCmN1cmwgLS1mYWlsIC1IICJBdXRob3JpemF0aW9uOiBCZWFyZXIgT3JhY2xlIiAtTDAgaHR0cDovLzE2OS4yNTQuMTY5LjI1NC9vcGMvdjIvaW5zdGFuY2UvbWV0YWRhdGEvb2tlX2luaXRfc2NyaXB0IHwgYmFzZTY0IC0tZGVjb2RlID4vdmFyL3J1bi9va2UtaW5pdC5zaApzaCAvdmFyL3J1bi9va2UtaW5pdC5zaA=="
   }
   shape = "VM.Standard.A1.Flex"
   shape_config {
-    memory_in_gbs = local.vm_memory
-    ocpus = local.vm_ocpus
+    memory_in_gbs = "6"
+    ocpus = "1"
   }
   source_details {
+    source_id = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa3jtmxbbgzbhoehgbg736jzgelbqbr2vmoljwvaymllw32tkm6era"
     source_type = "image"
-    source_id = local.image_ocid
   }
 }
 
-resource "oci_core_instance_console_connection" "beastie_console" {
-  instance_id = oci_core_instance.beastie.id
-  public_key = local.console_ssh_public_key
+resource "oci_core_vcn" "generated_oci_core_vcn" {
+  cidr_block = "10.0.0.0/16"
+  compartment_id = "ocid1.tenancy.oc1..aaaaaaaadlplzdfpt2fa4deyzjw7ioh22lzdqr6gxc2iggh6y5pkdptoxrxq"
+  display_name = "beastie-vcn-1337"
+  dns_label = "vcn04051344"
 }
 
-
-output "oid" {
-  value = oci_core_instance.beastie.id
+resource "oci_core_subnet" "generated_oci_core_subnet" {
+  cidr_block = "10.0.0.0/24"
+  compartment_id = "ocid1.tenancy.oc1..aaaaaaaadlplzdfpt2fa4deyzjw7ioh22lzdqr6gxc2iggh6y5pkdptoxrxq"
+  display_name = "beastie-subnet-1337"
+  dns_label = "subnet04051344"
+  route_table_id = "${oci_core_vcn.generated_oci_core_vcn.default_route_table_id}"
+  vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
 }
 
-output "ssh" {
-  value = oci_core_instance_console_connection.beastie_console.connection_string
+resource "oci_core_internet_gateway" "generated_oci_core_internet_gateway" {
+  compartment_id = "ocid1.tenancy.oc1..aaaaaaaadlplzdfpt2fa4deyzjw7ioh22lzdqr6gxc2iggh6y5pkdptoxrxq"
+  display_name = "Internet Gateway beastie-vcn-1337"
+  enabled = "true"
+  vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
 }
 
-output "public_ip" {
-  value = oci_core_instance.beastie.public_ip
+resource "oci_core_default_route_table" "generated_oci_core_default_route_table" {
+  route_rules {
+    destination = "0.0.0.0/0"
+    destination_type = "CIDR_BLOCK"
+    network_entity_id = "${oci_core_internet_gateway.generated_oci_core_internet_gateway.id}"
+  }
+  manage_default_resource_id = "${oci_core_vcn.generated_oci_core_vcn.default_route_table_id}"
 }
-
-output "private_ip" {
-  value = oci_core_instance.beastie.private_ip
-}
-
