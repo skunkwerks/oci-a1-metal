@@ -1,26 +1,28 @@
 locals {
-  region = "eu-amsterdam-1"
-  user_ocid = "ocid1.user.oc1..aaaaaaaazheljpk55ho323uefs2x3sccdlgyahjsydumhqpukcqudlhpi7fa"
-  tenancy_ocid = "ocid1.tenancy.oc1..aaaaaaaaobmlhruktcqx2vi7r5mdu7eqkzucnjhziwfeb6s6thzgay4ujuhq"
-  compartment_ocid = "ocid1.tenancy.oc1..aaaaaaaaobmlhruktcqx2vi7r5mdu7eqkzucnjhziwfeb6s6thzgay4ujuhq"
-  availability_domain = "Ynwz:eu-amsterdam-1-AD-1"
-  # subnet_ocid = "ocid1.subnet.oc1.eu-amsterdam-1.aaaaaaaa7lfgj4fcyfxlqc7cr4nhottzufvo5zzj2vc4syayk23i4rchenfq"
-  image_ocid = "ocid1.image.oc1.eu-amsterdam-1.aaaaaaaalnttofwyncslnxc5a757mb72w6dqkmiel4mlt6uoextxxgsu6ypa"
-  vm_memory = "12"
-  vm_ocpus = "2"
-  console_ssh_public_key  = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8OZGfPONqBUYPOVaxmthl6YEfUfUrTppvBLd1m0AotOXUfNIp43foqMwoQ6SJ1fSAsaqXjPydpV1djvxlgh55B8xZoPvT188EefbDYLSHl1FTH/uufiIkRReT5xx4kqg8zhrOR8+kk2ICtwIhZn4SHpJaImutzOfMexFj/H6BPBjiVsWcwj7rlDDEn9Bx1lJ30d/1B7Qlaw5bySTs973BxKAMeny1tOBFOwnOqo93WpZ1dt8GJB+zq763Q2jPqZv3yQUxxPFGUSTzvmrx/WMkaqKW7IKeXZV9oxc8UYCBzU2li+uPMJCbAUpXk50pxNa2Kb2bQBwgEF3LawmfXFkN oracle_rsa"
-  ssh_authorized_keys = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHuuKqa0KEiCFC3Pr5LmWae/ZZfxOQcH9b9jFHLEMC3t ansible@cabal5.net 20201223\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJZ0cNlRkFRRleUZhFjIZYJ2p7h7wNWvODGBLEzfSfvr dch@skunkwerks.at 20201124\necdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzODQAAABhBItIwUr8zhXOBtFH1B0YmNz2WJcY6w1ysRiTAIkI2CBenMb0f7H2pH1rFAa6ZF6dYS3SuLMng+igZUfkqhV/0Km+zus3lAjc37FFiawtATt+/nRj3hj/AaVz/cK7NnWdlg== dch@yk10616337_eccp384_20191024"
-  ssh_fingerprint = "57:70:a4:aa:3e:72:d1:ff:39:45:fa:8f:90:98:39:a1"
+  region = "eu-frankfurt-1"
+  user_ocid = "ocid1.user.oc1..aaaabbcc123"
+  tenancy_ocid = "ocid1.tenancy.oc1..aaaabbcc123"
+  compartment_ocid = "ocid1.tenancy.oc1..aaaabbcc123"
+  availability_domain = "VomW:EU-FRANKFURT-1-AD-2"
+
+  image_ocid = "ocid1.image.oc1.eu-frankfurt-1.aaaabbcc123"
+  vm_memory = "4"
+  vm_ocpus = "1"
+  console_ssh_public_key  = "ssh-rsa aaaabbcc123"
   ssh_private_key_path = "~/.oci/oci_api.pem"
+  ssh_fingerprint = "57:67:46:00:3:27:81:00:78:54:a7:52:b0:52:62:a1"
+  ssh_authorized_keys = "ssh-ed25519 aaaabbcc123"
+
   # encoded base64 script - use converters/base64 from ports
-  #  #!/bin/sh
+  #  #!/bin/sh -e -u -o pipefail
+  #  touch /var/run/cloud_script
   #  curl --fail -H "Authorization: Bearer Oracle" -L0 http://169.254.169.254/opc/v2/instance/metadata/oke_init_script | base64 --decode >/var/run/oke-init.sh
-  #  sh /var/run/oke-init.sh
-  user_base64_encoded_script = "IyEvYmluL3NoCmN1cmwgLS1mYWlsIC1IICJBdXRob3JpemF0aW9uOiBCZWFyZXIgT3JhY2xlIiAtTDAgaHR0cDovLzE2OS4yNTQuMTY5LjI1NC9vcGMvdjIvaW5zdGFuY2UvbWV0YWRhdGEvb2tlX2luaXRfc2NyaXB0IHwgYmFzZTY0IC0tZGVjb2RlID4vdmFyL3J1bi9va2UtaW5pdC5zaApzaCAvdmFyL3J1bi9va2UtaW5pdC5zaA=="
+  user_base64_encoded_script = "IyEvYmluL3NoIC1lIC11IC1vIHBpcGVmYWlsCnRvdWNoIC92YXIvcnVuL2Nsb3VkX3NjcmlwdApjdXJsIC0tZmFpbCAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyIE9yYWNsZSIgLUwwIGh0dHA6Ly8xNjkuMjU0LjE2OS4yNTQvb3BjL3YyL2luc3RhbmNlL21ldGFkYXRhL29rZV9pbml0X3NjcmlwdCB8IGJhc2U2NCAtLWRlY29kZSA+L3Zhci9ydW4vb2tlLWluaXQuc2gKCg=="
 }
 
 # https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm
 # https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformconfig.htm#terraformconfig_topic_Configuration_File_Requirements_Provider
+
 provider "oci" {
   tenancy_ocid = local.tenancy_ocid
   user_ocid = local.user_ocid
@@ -78,7 +80,7 @@ resource "oci_core_instance" "beastie" {
   }
   metadata = {
     "ssh_authorized_keys" = local.ssh_authorized_keys
-    # "user_data" = local.user_base64_encoded_script
+    "user_data" = local.user_base64_encoded_script
   }
   shape = "VM.Standard.A1.Flex"
   shape_config {
