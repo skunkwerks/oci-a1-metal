@@ -1,23 +1,29 @@
 locals {
-  region = "eu-frankfurt-1"
-  user_ocid = "ocid1.user.oc1..aaaaaaaaqnqyyzizfu7qwzgbz3g3bgob73amxgwi4siqx76n3q6xwmnvma6a"
-  tenancy_ocid = "ocid1.tenancy.oc1..aaaaaaaadlplzdfpt2fa4deyzjw7ioh22lzdqr6gxc2iggh6y5pkdptoxrxq"
-  compartment_ocid = "ocid1.tenancy.oc1..aaaaaaaadlplzdfpt2fa4deyzjw7ioh22lzdqr6gxc2iggh6y5pkdptoxrxq"
-  availability_domain = "VomW:EU-FRANKFURT-1-AD-2"
+  region = "eu-amsterdam-1"
+  user_ocid = "ocid1.user.oc1..aaaa"
+  tenancy_ocid = "ocid1.tenancy.oc1..aaaa"
+  compartment_ocid = "ocid1.tenancy.oc1..aaaa"
+  availability_domain = "Ynwz:eu-amsterdam-1-AD-1"
+  image_ocid = "ocid1.image.oc1.eu-amsterdam-1.aaaa"
 
-  image_ocid = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaaiza2re7yog3ozrhoaueve6ayootly227z2ldqnjckfczqqcl5zqa"
-  vm_memory = "4"
-  vm_ocpus = "1"
-  console_ssh_public_key  = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8OZGfPONqBUYPOVaxmthl6YEfUfUrTppvBLd1m0AotOXUfNIp43foqMwoQ6SJ1fSAsaqXjPydpV1djvxlgh55B8xZoPvT188EefbDYLSHl1FTH/uufiIkRReT5xx4kqg8zhrOR8+kk2ICtwIhZn4SHpJaImutzOfMexFj/H6BPBjiVsWcwj7rlDDEn9Bx1lJ30d/1B7Qlaw5bySTs973BxKAMeny1tOBFOwnOqo93WpZ1dt8GJB+zq763Q2jPqZv3yQUxxPFGUSTzvmrx/WMkaqKW7IKeXZV9oxc8UYCBzU2li+uPMJCbAUpXk50pxNa2Kb2bQBwgEF3LawmfXFkN ~/.oci/oci_api.pem"
+  vm_memory = "24"
+  vm_ocpus = "4"
+  console_ssh_public_key  = "ssh-rsa aaaa"
   ssh_private_key_path = "~/.oci/oci_api.pem"
   ssh_fingerprint = "57:70:a4:aa:3e:72:d1:ff:39:45:fa:8f:90:98:39:a1"
-  ssh_authorized_keys = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHuuKqa0KEiCFC3Pr5LmWae/ZZfxOQcH9b9jFHLEMC3t ansible@cabal5.net 20201223\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJZ0cNlRkFRRleUZhFjIZYJ2p7h7wNWvODGBLEzfSfvr dch@skunkwerks.at 20201124\necdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzODQAAABhBItIwUr8zhXOBtFH1B0YmNz2WJcY6w1ysRiTAIkI2CBenMb0f7H2pH1rFAa6ZF6dYS3SuLMng+igZUfkqhV/0Km+zus3lAjc37FFiawtATt+/nRj3hj/AaVz/cK7NnWdlg== dch@yk10616337_eccp384_20191024"
+  ssh_authorized_keys = "ssh-ed25519 aaaa"
 
-  # encoded base64 script - use converters/base64 from ports
-  #  #!/bin/sh -e -u -o pipefail
-  #  touch /var/run/cloud_script
-  #  curl --fail -H "Authorization: Bearer Oracle" -L0 http://169.254.169.254/opc/v2/instance/metadata/oke_init_script | base64 --decode >/var/run/oke-init.sh
-  user_base64_encoded_script = "IyEvYmluL3NoIC1lIC11IC1vIHBpcGVmYWlsCnRvdWNoIC92YXIvcnVuL2Nsb3VkX3NjcmlwdApjdXJsIC0tZmFpbCAtSCAiQXV0aG9yaXphdGlvbjogQmVhcmVyIE9yYWNsZSIgLUwwIGh0dHA6Ly8xNjkuMjU0LjE2OS4yNTQvb3BjL3YyL2luc3RhbmNlL21ldGFkYXRhL29rZV9pbml0X3NjcmlwdCB8IGJhc2U2NCAtLWRlY29kZSA+L3Zhci9ydW4vb2tlLWluaXQuc2gKCg=="
+  user_base64_encoded_script = base64encode(
+    <<-CLOUDSCRIPT
+    #!/bin/sh -eu
+    set -o pipefail
+    touch /var/run/cloud_script_was_here
+    # https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/gettingmetadata.htm
+    curl --fail -H "Authorization: Bearer Oracle" -s \
+      http://169.254.169.254/opc/v2/instance \
+        | jq . >/var/run/oci_metadata.json
+    CLOUDSCRIPT
+    )
 }
 
 # https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/terraformproviderconfiguration.htm
@@ -74,7 +80,7 @@ resource "oci_core_instance" "beastie" {
     assign_public_ip = "true"
     subnet_id = "${oci_core_subnet.generated_oci_core_subnet.id}"
   }
-  display_name = "beastie-arm64-1337"
+  display_name = "beastie"
   instance_options {
     are_legacy_imds_endpoints_disabled = "false"
   }
@@ -96,22 +102,22 @@ resource "oci_core_instance" "beastie" {
 resource "oci_core_vcn" "generated_oci_core_vcn" {
   cidr_block = "10.0.0.0/16"
   compartment_id = local.compartment_ocid
-  display_name = "beastie-vcn-1337"
-  dns_label = "vcn04051344"
+  display_name = "beastie"
+  dns_label = "beastie"
 }
 
 resource "oci_core_subnet" "generated_oci_core_subnet" {
   cidr_block = "10.0.0.0/24"
   compartment_id = local.compartment_ocid
-  display_name = "beastie-subnet-1337"
-  dns_label = "subnet04051344"
+  display_name = "beastie"
+  dns_label = "beastie"
   route_table_id = "${oci_core_vcn.generated_oci_core_vcn.default_route_table_id}"
   vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
 }
 
 resource "oci_core_internet_gateway" "generated_oci_core_internet_gateway" {
   compartment_id = local.compartment_ocid
-  display_name = "Internet Gateway beastie-vcn-1337"
+  display_name = "beastie"
   enabled = "true"
   vcn_id = "${oci_core_vcn.generated_oci_core_vcn.id}"
 }
