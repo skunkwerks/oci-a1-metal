@@ -1,0 +1,45 @@
+# Collect the following credential information from the OCI Console
+# Tenancy OCID: <tenancy-ocid>
+#     From your user avatar, go to Tenancy:<your-tenancy> and copy OCID.
+# User OCID: <user-ocid>
+#     From your user avatar, go to User Settings and copy OCID.
+# Fingerprint: <fingerprint>
+#     From your user avatar, go to User Settings and click API Keys.
+#     Copy the fingerprint associated with the RSA public key you made
+#     in section 2. The format is: xx:xx:xx...xx.
+# Region: <region-identifier>
+#     From the top navigation bar, find your region.
+#     Find your region's <region-identifier> from Regions and
+#     Availability Domains. Example: us-ashburn-1.
+# Collect the following information from your environment.
+# Private Key Path: <rsa-private-key-path>
+#     Path to the RSA private key you made in the Create RSA Keys
+#     section. Example: $HOME/.oci/<your-rsa-key-name>.pem.
+
+# OCI authorization and authentication vars
+user_ocid = "ocid1.user.oc1.."
+tenancy_ocid = "ocid1.tenancy.oc1.."
+ssh_private_key_path = "~/.oci/oci_api.pem"
+ssh_fingerprint = "ca:fe:..."
+
+# OCI location vars
+region = "eu-frankfurt-1"
+compartment_ocid = "ocid1.compartment.oc1."
+availability_domain = "hENZ:EU-FRANKFURT-1-AD-3"
+
+# OCI VM instance config
+image_ocid = "ocid1.image..."
+vm_memory = "24"
+vm_ocpus = "4"
+console_ssh_public_key  = "ssh-rsa AAAAB..."
+ssh_authorized_keys = "ssh-ed25519 AAAA..."
+boot_script = <<-CLOUDSCRIPT
+	#!/bin/sh -eu
+	set -o pipefail
+	touch /var/run/cloud_script_was_here
+	# https://docs.oracle.com/en-us/iaas/Content/Compute/Tasks/gettingmetadata.htm
+	curl --fail -H "Authorization: Bearer Oracle" -s \
+	    http://169.254.169.254/opc/v2/instance \
+	    | jq . >/var/run/oci_metadata.json
+CLOUDSCRIPT
+
