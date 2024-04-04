@@ -51,7 +51,7 @@ resource "oci_core_instance" "beastie" {
     "ssh_authorized_keys" = var.ssh_authorized_keys
     "user_data" = base64encode(var.boot_script)
   }
-  shape = "VM.Standard.A1.Flex"
+  shape = var.vm_shape
   shape_config {
     memory_in_gbs = var.vm_memory
     ocpus = var.vm_ocpus

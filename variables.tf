@@ -22,6 +22,10 @@ variable "image_ocid" {
   type = string
 }
 
+variable "vm_shape" {
+  type = string
+}
+
 variable "vm_memory" {
   type = string
 }

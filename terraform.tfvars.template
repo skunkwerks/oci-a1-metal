@@ -29,6 +29,7 @@ availability_domain = "hENZ:EU-FRANKFURT-1-AD-3"
 
 # OCI VM instance config
 image_ocid = "ocid1.image..."
+vm_shape = "VM.Standard.A1.Flex"
 vm_memory = "24"
 vm_ocpus = "4"
 console_ssh_public_key  = "ssh-rsa AAAAB..."

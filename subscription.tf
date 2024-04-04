@@ -19,7 +19,7 @@ resource "oci_core_app_catalog_subscription" "mp_image_subscription" {
   time_retrieved           = oci_core_app_catalog_listing_resource_version_agreement.mp_image_agreement[0].time_retrieved
 
   timeouts {
-    create = "20m"
+    create = "5m"
   }
 }
 
